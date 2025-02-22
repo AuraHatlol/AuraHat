@@ -103,24 +103,17 @@ def play_audio_continuously(sample_rate=44100):
         if update_flag:
             update_flag = False
 
-# Step 5: Handle user input
-def user_input_thread():
+# Step 5: Function to update distance and angle
+def update_audio_params(new_distance, new_angle):
+    """
+    Update the global distance and angle parameters.
+    :param new_distance: New distance value (0 = closest, higher values = farther).
+    :param new_angle: New angle value (-180 to 180 degrees, 0 = front).
+    """
     global distance, angle, update_flag
-    
-    while True:
-        try:
-            new_distance = 1
-            new_angle = angle + 0.05
-            if angle > 360:
-                angle = 0
-                new_angle = 0
-            print(new_angle)
-            # Update global variables
-            distance = new_distance
-            angle = new_angle
-            update_flag = True
-        except ValueError:
-            print("Invalid input. Please enter numeric values.")
+    distance = new_distance
+    angle = new_angle
+    update_flag = True
 
 # Main function
 def main():
@@ -129,17 +122,16 @@ def main():
     audio_thread.daemon = True  # Daemonize thread to exit when the main program exits
     audio_thread.start()
     
-    # Start the user input thread
-    input_thread = threading.Thread(target=user_input_thread)
-    input_thread.daemon = True
-    input_thread.start()
-    
-    # Keep the main program running
+    # Example usage of update_audio_params
     try:
         while True:
-            pass
+            # Simulate updating distance and angle programmatically
+            new_distance = float(input("Enter distance (0 = closest, higher values = farther): "))
+            new_angle = float(input("Enter angle (-180 to 180 degrees, 0 = front): "))
+            update_audio_params(new_distance, new_angle)
     except KeyboardInterrupt:
         print("Exiting...")
 
 # Run the main function
-main()
+if __name__ == "__main__":
+    main()
