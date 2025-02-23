@@ -6,7 +6,7 @@ import threading
 from collections import deque
 
 class ObjectDetector:
-    def __init__(self, model_path='yolov8n.pt', device=None, fov=90, image_width=2048, image_height=840):
+    def __init__(self, model_path='yolo11n_ncnn_model', device=None, fov=90, image_width=2048, image_height=840):
         """
         Initializes the YOLOv8 object detector.
         :param model_path: Path to the YOLO model file (default is 'yolov8n.pt' for COCO detection).
