@@ -63,7 +63,7 @@ class ObjectDetector:
                     class_name = names.get(class_ids[i], "Unknown")
                     confidence = confidences[i]
                     
-                    if confidence > 0.8 and area > largest_area:
+                    if class_name in valid_classes and confidence > 0.8 and area > largest_area:
                         largest_area = area
                         largest_box = (x1, y1, x2, y2)
                         largest_class = class_name
