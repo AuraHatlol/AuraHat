@@ -1,47 +1,98 @@
 import RPi.GPIO as GPIO
 import time
+import threading
 
-# Define GPIO pins
-TRIG = 23  # Trigger pin
-ECHO = 24  # Echo pin
+class UltrasonicSensor:
+    def __init__(self, trigger_pin, echo_pin):
+        """
+        Initializes the ultrasonic sensor with the specified GPIO pins.
+        :param trigger_pin: GPIO pin connected to the sensor's trigger.
+        :param echo_pin: GPIO pin connected to the sensor's echo.
+        """
+        self.TRIG = trigger_pin
+        self.ECHO = echo_pin
+        self.distance = 0.0
+        self.running = False
+        self.thread = None
+        
+        # Setup GPIO
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.TRIG, GPIO.OUT)
+        GPIO.setup(self.ECHO, GPIO.IN)
 
-# Setup GPIO
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(TRIG, GPIO.OUT)
-GPIO.setup(ECHO, GPIO.IN)
+    def measure_distance(self):
+        """
+        Measures the distance using the ultrasonic sensor.
+        """
+        # Ensure trigger is low
+        GPIO.output(self.TRIG, False)
+        time.sleep(0.1)
 
-def measure_distance():
-    # Ensure trigger is low
-    GPIO.output(TRIG, False)
-    time.sleep(0.1)
+        # Send a 10µs pulse to trigger
+        GPIO.output(self.TRIG, True)
+        time.sleep(0.00001)  # 10 microseconds
+        GPIO.output(self.TRIG, False)
 
-    # Send a 10µs pulse to trigger
-    GPIO.output(TRIG, True)
-    time.sleep(0.00001)  # 10 microseconds
-    GPIO.output(TRIG, False)
-
-    # Wait for echo response
-    while GPIO.input(ECHO) == 0:
+        # Wait for echo response
         pulse_start = time.time()
-    
-    while GPIO.input(ECHO) == 1:
+        while GPIO.input(self.ECHO) == 0:
+            pulse_start = time.time()
+        
         pulse_end = time.time()
+        while GPIO.input(self.ECHO) == 1:
+            pulse_end = time.time()
 
-    # Calculate time difference
-    pulse_duration = pulse_end - pulse_start
+        # Calculate time difference
+        pulse_duration = pulse_end - pulse_start
 
-    # Convert to distance (Speed of sound = 34300 cm/s)
-    distance = pulse_duration * 17150  # Convert to cm
-    distance = round(distance, 2)  # Round to two decimal places
+        # Convert to distance (Speed of sound = 34300 cm/s)
+        self.distance = round(pulse_duration * 17150, 2)  # Convert to cm
 
-    return distance
+    def _run(self):
+        """
+        Continuously measures distance in a separate thread.
+        """
+        while self.running:
+            self.measure_distance()
+            time.sleep(1)  # Delay between readings
 
-try:
-    while True:
-        dist = measure_distance()
-        print(f"Distance: {dist} cm")
-        time.sleep(1)  # Delay between readings
+    def start(self):
+        """
+        Starts the distance measurement in a separate thread.
+        """
+        if not self.running:
+            self.running = True
+            self.thread = threading.Thread(target=self._run)
+            self.thread.daemon = True
+            self.thread.start()
+            print("Ultrasonic sensor thread started.")
 
-except KeyboardInterrupt:
-    print("Measurement stopped by user")
-    GPIO.cleanup()  # Cleanup GPIO on exit
+    def stop(self):
+        """
+        Stops the distance measurement thread.
+        """
+        self.running = False
+        if self.thread:
+            self.thread.join()
+        print("Ultrasonic sensor thread stopped.")
+
+    def cleanup(self):
+        """
+        Cleans up the GPIO pins.
+        """
+        GPIO.cleanup()
+
+# Example usage
+if __name__ == "__main__":
+    try:
+        sensor = UltrasonicSensor(trigger_pin=23, echo_pin=24)
+        sensor.start()
+        
+        while True:
+            print(f"Distance: {sensor.distance} cm")
+            time.sleep(1)  # Main thread delay
+
+    except KeyboardInterrupt:
+        print("Measurement stopped by user")
+        sensor.stop()
+        sensor.cleanup()
