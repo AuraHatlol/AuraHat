@@ -6,7 +6,7 @@ import threading
 from picamera2 import Picamera2
 
 class ObjectDetector:
-    def __init__(self, model_path='yolov8n.pt', device=None, fov=90, image_width=640, image_height=480):
+    def __init__(self, model_path='yolov11n.pt', device=None, fov=90, image_width=640, image_height=480):
         print("Initializing YOLO Model...")
         
         self.device = device if device else ("cuda" if torch.cuda.is_available() else "cpu")
@@ -16,6 +16,7 @@ class ObjectDetector:
         print(f"Using device: {self.device}")
         
         self.model = YOLO(model_path).to(self.device)
+    
         
         # Initialize Picamera2
         self.picam2 = Picamera2()
