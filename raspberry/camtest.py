@@ -1,27 +1,31 @@
 import cv2
-from picamera2 import Picamera2
+import numpy as np
+import picamera
+import picamera.array
 
 # Initialize the Pi Camera
-picam2 = Picamera2()
-picam2.preview_configuration.main.size = (640, 480)  # Set resolution
-picam2.preview_configuration.main.format = "RGB888"  # Set format
-picam2.preview_configuration.controls.FrameRate = 30  # Set FPS
-picam2.configure("preview")
-picam2.start()
+camera = picamera.PiCamera()
+camera.resolution = (640, 480)  # Set resolution
+camera.framerate = 30  # Set FPS
 
 # OpenCV Loop to Capture and Show Frames
 try:
-    while True:
-        frame = picam2.capture_array()
-        cv2.imshow("Raspberry Pi Camera Test", frame)
+    with picamera.array.PiRGBArray(camera) as output:
+        for frame in camera.capture_continuous(output, format="bgr", use_video_port=True):
+            image = frame.array  # Convert frame to a NumPy array
+            
+            cv2.imshow("Raspberry Pi Camera Test", image)  # Show frame
 
-        # Exit on 'q' key press
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+            # Clear the stream for the next frame
+            output.truncate(0)
+
+            # Exit on 'q' key press
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
 except KeyboardInterrupt:
     print("\nCamera test stopped by user.")
 
 finally:
-    picam2.close()
+    camera.close()
     cv2.destroyAllWindows()
