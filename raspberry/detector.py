@@ -102,14 +102,14 @@ class ObjectDetector:
                 x, y = midpoint
                 angle, distance = self.convert_point_to_polar(x, y, largest_area)
                 
-                cv2.circle(frame, (x, y), 5, (0, 0, 255), -1)
-                cv2.putText(frame, f"{largest_class} A: {round(angle, 1)}, D: {round(distance, 3)}, A: {largest_area}", 
-                            (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                # cv2.circle(frame, (x, y), 5, (0, 0, 255), -1)
+                # cv2.putText(frame, f"{largest_class} A: {round(angle, 1)}, D: {round(distance, 3)}, A: {largest_area}", 
+                #             (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
                 
                 print(f"Largest Detected: {largest_class}, Midpoint: {angle}")
                 print(f"Angle: {angle:.2f}, Distance: {distance:.2f}")
             
-            cv2.imshow("YOLOv8 Largest Object Detection", frame)
+            #cv2.imshow("YOLOv8 Largest Object Detection", frame)
             cv2.waitKey(1)
     
     def stop(self):
