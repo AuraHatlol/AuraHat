@@ -72,7 +72,12 @@ class ObjectDetector:
             midpoint_x = (x1 + x2) // 2
             midpoint_y = (y1 + y2) // 2
             
-            self.angle, self.distance = self.convert_point_to_polar(midpoint_x, midpoint_y, largest_area)
+            frame_area = self.image_width * self.image_height
+            object_size_percentage = (largest_area / frame_area) * 100
+
+            # Update angle and distance
+            self.angle, self.distance = self.convert_point_to_polar(midpoint_x, midpoint_y, object_size_percentage)
+
             return largest_class, (midpoint_x, midpoint_y), frame, largest_area
         else:
             self.angle, self.distance = 0.0, 100.0
