@@ -46,21 +46,26 @@ class ObjectDetector:
         largest_box = None
         largest_class = None
         
+        valid_classes = {"person", "chair", "dining table"}
+        
         for result in results:
             boxes = result.boxes
             if boxes is not None and hasattr(boxes, 'xyxy'):
                 box_coords = boxes.xyxy.cpu().numpy()
                 class_ids = boxes.cls.cpu().numpy().astype(int)
+                confidences = boxes.conf.cpu().numpy()
                 names = self.model.names
                 
                 for i, box in enumerate(box_coords):
                     x1, y1, x2, y2 = map(int, box)
                     area = (x2 - x1) * (y2 - y1)
+                    class_name = names.get(class_ids[i], "Unknown")
+                    confidence = confidences[i]
                     
-                    if area > largest_area:
+                    if class_name in valid_classes and confidence > 0.8 and area > largest_area:
                         largest_area = area
                         largest_box = (x1, y1, x2, y2)
-                        largest_class = names.get(class_ids[i], "Unknown")
+                        largest_class = class_name
         
         if largest_box:
             x1, y1, x2, y2 = largest_box
