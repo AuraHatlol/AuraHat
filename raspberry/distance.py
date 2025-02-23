@@ -90,7 +90,7 @@ if __name__ == "__main__":
         
         while True:
             print(f"Distance: {sensor.distance} cm")
-            time.sleep(1)  # Main thread delay
+            time.sleep(0.2)  # Main thread delay
 
     except KeyboardInterrupt:
         print("Measurement stopped by user")
