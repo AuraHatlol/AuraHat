@@ -39,6 +39,7 @@ class ObjectDetector:
     def detect_largest_object(self):
         frame = self.picam2.capture_array()
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  # Convert to OpenCV format
+        frame = cv2.flip(frame, -1)  # Flip the image upside down
         
         results = self.model(frame)
         
