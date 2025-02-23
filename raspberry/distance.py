@@ -11,7 +11,7 @@ class UltrasonicSensor:
         """
         self.TRIG = trigger_pin
         self.ECHO = echo_pin
-        self.distance = 0.0
+        self.distance = 10000.0
         self.running = False
         self.thread = None
         
@@ -47,6 +47,8 @@ class UltrasonicSensor:
 
         # Convert to distance (Speed of sound = 34300 cm/s)
         self.distance = round(pulse_duration * 17150, 2)  # Convert to cm
+        if self.distance > 400:
+            self.distance = 10000.0
 
     def _run(self):
         """
