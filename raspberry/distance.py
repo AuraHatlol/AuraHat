@@ -54,7 +54,7 @@ class UltrasonicSensor:
         """
         while self.running:
             self.measure_distance()
-            time.sleep(1)  # Delay between readings
+            time.sleep(0.2)  # Delay between readings
 
     def start(self):
         """
