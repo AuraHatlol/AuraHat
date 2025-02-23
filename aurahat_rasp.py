@@ -18,7 +18,7 @@ class AuraHat:
         Runs in a separate thread to update the audio parameters in real-time.
         """
         while self.running:
-            newdistance = self.distance_sensor.distance / 10
+            newdistance = min(self.distance_sensor.distance / 10, self.objectdetector.distance)
             newangle = self.objectdetector.angle * 1.5
             print(newdistance, newangle)
             self.spatialaudio.update_audio_params(newdistance, newangle)  # Update the spatial audio parameters
