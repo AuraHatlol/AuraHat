@@ -8,14 +8,14 @@
 **Seeround** is an award winning wearable device designed to help visually impaired users navigate **indoor spaces hands free**.  
 The system combines **real-time object recognition** with **spatial audio feedback**, allowing users to gain situational awareness without relying on physical assistance.  
 
-🏆 **Best Hardware Hack** at **Cornell Makeathon** (Feb 2025).  
+🏆 **Best Hardware Hack** at **Cornell Makeathon** (Feb 2025).
 
 ---
 
 ## Tech Stack  
 - **Programming Languages:** Python  
-- **Libraries & Tools:** OpenCV, PySound 
-- **Hardware:** Raspberry Pi, Ultrasonic Distance Sensor
+- **Libraries & Tools:** OpenCV, PySound
+- **Hardware:** Raspberry Pi, Ultrasonic Distance Sensor,
 
 ---
 
